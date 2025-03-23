@@ -69,7 +69,7 @@ fi
 
 # 执行 `update-sf-components.sh`
 log "执行 $UPDATE_SF_SCRIPT 更新 SecretFlow 组件..."
-sudo "./$UPDATE_SF_SCRIPT" -u root -i "$REMOTE_IMAGE"
+sudo bash "$UPDATE_SF_SCRIPT" -u root -i "$REMOTE_IMAGE"
 
 # Step 2: 拉取并执行 `register_app_image.sh`
 REGISTER_SCRIPT="register_app_image.sh"
@@ -103,7 +103,7 @@ else
 fi
 
 # 导入容器：
-sudo "./$REGISTER_SCRIPT" -c $APP_NAME -i "$REMOTE_IMAGE" --import
+sudo bash "$REGISTER_SCRIPT" -c $APP_NAME -i "$REMOTE_IMAGE" --import
 
 log "脚本执行完毕。"
 cd "$SCRIPT_DIR" || exit

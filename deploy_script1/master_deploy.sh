@@ -57,7 +57,7 @@ fi
 
 # 执行 `update-sf-components.sh`
 log "执行 $UPDATE_SF_SCRIPT 更新 SecretFlow 组件..."
-sudo "./$UPDATE_SF_SCRIPT" -u root -i "$REMOTE_IMAGE"
+sudo bash "$UPDATE_SF_SCRIPT" -u root -i "$REMOTE_IMAGE"
 
 # Step 2: 拉取并执行 `register_app_image.sh`
 REGISTER_SCRIPT="${SCRIPT_DIR}/register_app_image.sh"
@@ -92,9 +92,9 @@ fi
 
 # 注册镜像到不同容器
 log "执行 $REGISTER_SCRIPT 注册镜像..."
-sudo "./$REGISTER_SCRIPT" -c root-kuscia-master -i "$REMOTE_IMAGE" -f app_image.secretflow.yaml
-sudo "./$REGISTER_SCRIPT" -c root-kuscia-lite-alice -i "$REMOTE_IMAGE" --import
-sudo "./$REGISTER_SCRIPT" -c root-kuscia-lite-bob -i "$REMOTE_IMAGE" --import
+sudo bash "$REGISTER_SCRIPT" -c root-kuscia-master -i "$REMOTE_IMAGE" -f app_image.secretflow.yaml
+sudo bash "$REGISTER_SCRIPT" -c root-kuscia-lite-alice -i "$REMOTE_IMAGE" --import
+sudo bash "$REGISTER_SCRIPT" -c root-kuscia-lite-bob -i "$REMOTE_IMAGE" --import
 
 # 打印部署完成信息
 log "部署完成！版本号：$VERSION"

@@ -59,7 +59,7 @@ else
 fi
 
 # 执行 update-sf-components.sh 脚本更新 SecretFlow 组件
-sudo ./update-sf-components.sh -u root -i secretflow/sf-dev-anolis8:$IMAGE_NAME
+sudo bash update-sf-components.sh -u root -i secretflow/sf-dev-anolis8:$IMAGE_NAME
 
 # Step 7: 拉取并执行 register_app_image.sh 脚本
 # 定义要检查的文件名
@@ -79,15 +79,17 @@ if [ ! -f "$FILE" ]; then
     # 赋予脚本执行权限
     chmod u+x $FILE
 
+    sed -i '84s/.*/  if false; then/' $REGISTER_SCRIPT
+
     echo "$FILE 文件已下载并赋予执行权限。"
 else
     echo "$FILE 文件已存在，跳过下载步骤。"
 fi
 
 # 执行 register_app_image.sh 脚本注册镜像
-sudo ./register_app_image.sh -c root-kuscia-master -i secretflow/sf-dev-anolis8:$IMAGE_NAME -f app_image.secretflow.yaml
-sudo ./register_app_image.sh -c root-kuscia-lite-alice -i secretflow/sf-dev-anolis8:$IMAGE_NAME --import
-sudo ./register_app_image.sh -c root-kuscia-lite-bob -i secretflow/sf-dev-anolis8:$IMAGE_NAME --import
+sudo bash register_app_image.sh -c root-kuscia-master -i secretflow/sf-dev-anolis8:$IMAGE_NAME -f app_image.secretflow.yaml
+sudo bash register_app_image.sh -c root-kuscia-lite-alice -i secretflow/sf-dev-anolis8:$IMAGE_NAME --import
+sudo bash register_app_image.sh -c root-kuscia-lite-bob -i secretflow/sf-dev-anolis8:$IMAGE_NAME --import
 
 # 打印部署完成信息
 echo "部署完成！版本号：$IMAGE_NAME"

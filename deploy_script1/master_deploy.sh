@@ -4,7 +4,7 @@
 set -e
 
 # 获取当前脚本的完整目录路径
-SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 # Docker registry URL
 REGISTRY_URL="crpi-84gohwg2zpoyckdg.cn-hangzhou.personal.cr.aliyuncs.com"
 
@@ -60,7 +60,7 @@ log "执行 $UPDATE_SF_SCRIPT 更新 SecretFlow 组件..."
 sudo "./$UPDATE_SF_SCRIPT" -u root -i "$REMOTE_IMAGE"
 
 # Step 2: 拉取并执行 `register_app_image.sh`
-REGISTER_SCRIPT="register_app_image.sh"
+REGISTER_SCRIPT="${SCRIPT_DIR}/register_app_image.sh"
 
 if [ ! -f "$REGISTER_SCRIPT" ]; then
     log "$REGISTER_SCRIPT 文件不存在，开始执行下载步骤..."
@@ -76,17 +76,14 @@ if [ ! -f "$REGISTER_SCRIPT" ]; then
     # 用 sed 替换第一个匹配的 if 条件为 if false; then
     # -i 表示直接修改文件，注意提前备份
     # 1. 找到第一个符合条件的行号
-    SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
-    CONFIG_FILE="${SCRIPT_DIR}/register_app_image_copy.sh"
-
-    line_num=$(grep -nF 'if docker exec -i "${KUSCIA_CONTAINER_NAME}" bash -c "kuscia image list 2>&1 | awk '\''{print \$1\":\"\$2}'\'' | grep -q \"^${IMAGE}$\""; then' "$CONFIG_FILE" | head -1 | cut -d: -f1)
+    line_num=$(grep -nF 'if docker exec -i "${KUSCIA_CONTAINER_NAME}" bash -c "kuscia image list 2>&1 | awk '\''{print \$1\":\"\$2}'\'' | grep -q \"^${IMAGE}$\""; then' "$REGISTER_SCRIPT" | head -1 | cut -d: -f1)
     # 2. 使用精确行号替换
     # 提取原缩进（兼容性更好的写法）
-    original_indent=$(sed -n "${line_num}s/^$[[:space:]]*$.*/\1/p" "$CONFIG_FILE")
+    original_indent=$(sed -n "${line_num}s/^$[[:space:]]*$.*/\1/p" "$REGISTER_SCRIPT")
 
-    cp "$CONFIG_FILE" "${CONFIG_FILE}.bak"  # 显式备份
+    cp "$REGISTER_SCRIPT" "${REGISTER_SCRIPT}.bak"  # 显式备份
     # 在替换内容前加两个空格
-    sed -i "${line_num}s/.*/${original_indent}  if false; then/" "$CONFIG_FILE"
+    sed -i "${line_num}s/.*/${original_indent}  if false; then/" "$REGISTER_SCRIPT"
 
     log "$REGISTER_SCRIPT 文件已下载并赋予执行权限。"
 else
